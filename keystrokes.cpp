@@ -3,16 +3,23 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
-#include <string.h>
+#include <string>
+#include <cstring>
 #include "keystrokes.h"
 #include "get_display.h"
 
+using namespace std ;
+static struct termios  term, oterm;
+
+extern string home;
+//char home[20] ;
+//char now_path[100];
 
 using namespace std;
-int function_to_store_in_termios_getchar()
+void function_to_store_in_termios_getchar()
 {
    //termios type of structure to store the old standard form of the terminal 
-  	static struct termios  term, oterm;
+  	
 
 	int character; // To input the keystroke 
 
@@ -42,44 +49,61 @@ int function_to_store_in_termios_getchar()
 
         tcsetattr(0, TCSANOW, &term);
 
-	//get character
-
-	character= getchar();
-
-	//set attribute immediately in oterm 
-
-        tcsetattr(0, TCSANOW, &oterm);
-
-
-	return character;
-
 }
 
-void keystrokes(int count , struct information pointer[])
+
+
+
+void display(int count_of_entries , struct information pointer[] , char *now_path)
 {
 
-	printf("\033[2J");
-	printf("\033[H");
-	display(count , pointer);
-	printf("\033[1A");
-	
-
-	int arrow = count;
- 	//till the user pess CTR-D run till that point
-	while (1)
+ 	int arrow = 0;
+ 	while (1)
     	{
-			int c ;
-			 c = function_to_store_in_termios_getchar();
-		   
+
+			char c ;
+
+				c= getchar();
+
 		          if (c == '\004')  // Ctr-D to exit 
-		          break;
-		  	
-			  if(c== 'A' && arrow>0)  
+		          {	
+
+		          	printf("\033[2J");
+		          	printf("\033[H");
+			    	tcsetattr(0, TCSANOW, &oterm);
+					exit(0) ;
+		          }
+
+		  	    if(c == '\n')
+		  	    	{
+		  	    		if(pointer[arrow].permissions[0] == 'd')
+		  	    				{
+		  	    					strcat(now_path , "/") ;
+		  	    					strcat(now_path , pointer[arrow].name);
+
+		  	    					count_of_entries = get_num_entries(now_path);
+		  	    					struct information ptr[count_of_entries];
+									arrow = 0;
+									get_permissions( pointer, now_path);
+		  	    				}
+
+		  	    	}
+
+		  	    if(c=='H'||c=='h')
+		  	    				{
+
+		  	    					count_of_entries = get_num_entries(&home[0]);
+		  	    					arrow = 0;
+		  	    					struct information ptr[count_of_entries];
+									get_permissions( pointer , &home[0]);
+		  	    				}
+
+			    if(c== 'A' && arrow>0)  
 			  		{
 			  			printf("\033[1A"); // for up arrow key
 			  			arrow--;
 			  		} 
-		  	  else if(c== 'B' && arrow < count-1)  
+		  	    else if(c== 'B' && arrow < count_of_entries-1)  
 		  	  		{
 		  	  			printf("\033[1B"); // for down arrow key
 		  	  			arrow++;

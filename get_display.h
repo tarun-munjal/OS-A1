@@ -8,6 +8,8 @@
 #include <pwd.h>
 #include <grp.h>
 #include "keystrokes.h"
+#include <cstring>
+
 
 struct information
 {
@@ -24,8 +26,8 @@ double total_size ;
 };
 
 
-void get_permissions( struct information pointer[]);
+void get_permissions( struct information pointer[] , char *path );
 
-void display(int , struct information ptr[]);
+//void display(int , struct information ptr[] , char *);
 
-int get_num_entries();
+int get_num_entries(char* now_path);

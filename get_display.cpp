@@ -9,7 +9,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <iomanip>
-
+#include <cstring>
 #include "include.h"
 #include "keystrokes.h"
 using namespace std;
@@ -38,13 +38,12 @@ double get_size(struct stat stat_structure)
 
 
 
-int get_num_entries()
+int get_num_entries(char* now_path)
 {
 		
 	DIR *directory ; 
 	struct dirent *details_dirent;
-	directory = opendir(".");
-
+	directory = opendir(now_path);
 
 	
 	if(directory == NULL)
@@ -53,29 +52,38 @@ int get_num_entries()
 		exit(1);
 	}	
 
+
 	struct stat stat_structure;
-	int num_entries =0 ;
-
-	while(	(details_dirent = readdir(directory)) != NULL	)
-	{
-
-		//Stat_structure to provide the size of the file 
-
-		struct stat stat_structure;
 		
-		//total size 	
-		if(	stat(details_dirent->d_name, &stat_structure) == 0)
-			num_entries++;
+			char *temp_c;
+			int num_entries = 0;
+			while(	(details_dirent = readdir(directory)) != NULL	)
+			{	
+				string temp ; 
+				temp = now_path; 
+				temp = temp + "/" + (details_dirent->d_name);
+				temp_c = &temp[0];
 
-	}
+
+				/*return data <sys/stat> by stat function*/
+				if(	stat(temp_c , &stat_structure ) == 0 )
+					num_entries++;
+
+			}
+cout<<"Entries"<<num_entries<<endl;
 	return num_entries;
+
 }
 
 
 
 
-void get_permissions( struct information store_info[])
+void get_permissions( struct information store_info[] , char *now_path)
 {
+
+	printf("\033[2J");
+	printf("\033[H");
+
 
 	int count_items =0;
 	cout.precision(3);	
@@ -87,7 +95,8 @@ void get_permissions( struct information store_info[])
 	struct group *gid;
 	
 	
-	directory = opendir(".");
+	directory = opendir(now_path);
+	
 	if(directory == NULL)
 	{
 		printf("Error : Unable to open directory.\n");
@@ -97,15 +106,18 @@ void get_permissions( struct information store_info[])
  	//stat structure to find all the file attributes from sys/stat
 		struct stat stat_structure;
 		
-
+			char *temp_c;
 			while(	(details_dirent = readdir(directory)) != NULL	)
 			{	
-
+				string temp ; 
+				temp = now_path; 
+				temp = temp + "/" + (details_dirent->d_name);
+				temp_c = &temp[0];
 
 				char permissions_array[11];
 
 				/*return data <sys/stat> by stat function*/
-				if(	stat(details_dirent->d_name , &stat_structure ) == 0 )
+				if(	stat(temp_c , &stat_structure ) == 0 )
 				{	
 					
 						//mode_t type of perm i.e. bit type . st_mode gives all the bits of permissions
@@ -154,29 +166,8 @@ void get_permissions( struct information store_info[])
 						store_info[count_items].uname = uid->pw_name; 
 						store_info[count_items].gname = gid->gr_name;
 						store_info[count_items].last_modified = time ;
-						count_items++;
-						
-		}//if
-		
-		else
-		{
-			printf("Unable to print ");
-		}
 
-	}//while loop; 
-}//function get_permission
-
-
-
-
-
-void display( int num_file_dir , struct information store_info[])
-{
-
-	int count_items ;
-	for(int count_items = 0 ; count_items < num_file_dir ; count_items++)
-		{	
-			cout<<count_items;
+			
 					for(int j=0 ; j<10 ; j++)
 						cout<<store_info[count_items].permissions[j];
 			
@@ -205,5 +196,20 @@ void display( int num_file_dir , struct information store_info[])
 			
 					//Use dirent here because name is not present in stat_structure
 					printf(" %s\n",store_info[count_items].name);
-			}
-}
+			
+					count_items++;
+			}//if
+						
+		
+		else
+		{
+			printf("Unable to print ");
+		}
+
+		}//while
+		//cout<<now_path<<endl;
+	
+		printf("\033[%dA",count_items);
+
+	} 
+//function get_permission
