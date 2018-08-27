@@ -10,10 +10,19 @@
 #include <grp.h>
 #include <iomanip>
 #include <cstring>
-#include "include.h"
+#include "get_display.h"
 #include "keystrokes.h"
+#include <unistd.h>
+#include <vector>
+#include <string>
+#include <sys/ioctl.h>
+
 using namespace std;
 
+extern int path_counter;
+extern int max_counter;
+extern int top_pointer ; 
+extern int bottom_pointer ;
 
 struct information * insert(struct information *node , struct information *head )
 {
@@ -38,7 +47,7 @@ double get_size(struct stat stat_structure)
 
 
 
-int get_num_entries(char* now_path)
+int get_num_entries(char *now_path)//char* now_path)
 {
 		
 	DIR *directory ; 
@@ -48,29 +57,29 @@ int get_num_entries(char* now_path)
 	
 	if(directory == NULL)
 	{
-		printf("Error : Unable to open directory.\n");
+		printf("Error : Unable to open directory");
 		exit(1);
 	}	
 
 
 	struct stat stat_structure;
 		
-			char *temp_c;
 			int num_entries = 0;
+
 			while(	(details_dirent = readdir(directory)) != NULL	)
 			{	
-				string temp ; 
-				temp = now_path; 
-				temp = temp + "/" + (details_dirent->d_name);
-				temp_c = &temp[0];
+				//to append the name of file/directory encountered now with the previous path now_path
+				string appended ; 
+				appended = now_path; 
+				appended = appended + "/" + (details_dirent->d_name);
+				//temp_c = &temp[0];
 
 
 				/*return data <sys/stat> by stat function*/
-				if(	stat(temp_c , &stat_structure ) == 0 )
+				if(	stat(&appended[0] , &stat_structure ) == 0 )
 					num_entries++;
 
 			}
-cout<<"Entries"<<num_entries<<endl;
 	return num_entries;
 
 }
@@ -78,15 +87,19 @@ cout<<"Entries"<<num_entries<<endl;
 
 
 
-void get_permissions( struct information store_info[] , char *now_path)
+void get_permissions( struct information store_info[] , char * now_path)//char *now_path)
 {
 
 	printf("\033[2J");
 	printf("\033[H");
 
 
+
+
+	//cout<<now_path;
 	int count_items =0;
-	cout.precision(3);	
+	cout.precision(1);
+	cout.setf(ios::fixed);	
 	DIR *directory ; 
 
 	//Dirent structure to find the name of the file where stat doesn't contains the
@@ -94,6 +107,9 @@ void get_permissions( struct information store_info[] , char *now_path)
 	struct passwd *uid;
 	struct group *gid;
 	
+	chdir(now_path);
+									
+									
 	
 	directory = opendir(now_path);
 	
@@ -106,18 +122,16 @@ void get_permissions( struct information store_info[] , char *now_path)
  	//stat structure to find all the file attributes from sys/stat
 		struct stat stat_structure;
 		
-			char *temp_c;
 			while(	(details_dirent = readdir(directory)) != NULL	)
 			{	
-				string temp ; 
-				temp = now_path; 
-				temp = temp + "/" + (details_dirent->d_name);
-				temp_c = &temp[0];
-
+				string appended ; 
+				appended = now_path; 
+				appended = appended + "/" + (details_dirent->d_name);
+				
 				char permissions_array[11];
 
 				/*return data <sys/stat> by stat function*/
-				if(	stat(temp_c , &stat_structure ) == 0 )
+				if(	stat(&appended[0] , &stat_structure ) == 0 )
 				{	
 					
 						//mode_t type of perm i.e. bit type . st_mode gives all the bits of permissions
@@ -167,7 +181,10 @@ void get_permissions( struct information store_info[] , char *now_path)
 						store_info[count_items].gname = gid->gr_name;
 						store_info[count_items].last_modified = time ;
 
-			
+					
+
+					//Displaying all the values
+
 					for(int j=0 ; j<10 ; j++)
 						cout<<store_info[count_items].permissions[j];
 			
@@ -199,17 +216,14 @@ void get_permissions( struct information store_info[] , char *now_path)
 			
 					count_items++;
 			}//if
-						
-		
+
 		else
 		{
 			printf("Unable to print ");
 		}
 
 		}//while
-		//cout<<now_path<<endl;
-	
-		printf("\033[%dA",count_items);
-
+		
+		printf("\033[%dA",count_items+1);
 	} 
 //function get_permission
