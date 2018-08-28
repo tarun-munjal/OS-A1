@@ -32,8 +32,8 @@ int main(int argc , char *argv[])
 	struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-    printf("%d\n", w.ws_row);
-    printf("%d\n",w.ws_col);
+   // printf("%d\n", w.ws_row);
+   // printf("%d\n",w.ws_col);
 
 	getcwd(now_path[path_counter] , sizeof(now_path[path_counter]));
 	

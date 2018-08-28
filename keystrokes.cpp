@@ -23,6 +23,11 @@ using namespace std;
 
 int top_pointer = 0  ;
 int bottom_pointer ;
+int arrow = 0;
+int col;
+int row;
+int move_to_command = 0;
+string command;
 
 void function_to_store_in_termios_getchar()
 {
@@ -62,17 +67,19 @@ void function_to_store_in_termios_getchar()
 void display(int count_of_entries , struct information pointer[] )
 {
 	
- 	int arrow = 0;
+ 	
+ 	struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+//    int rows , cols ;
+    row = w.ws_row;
+    bottom_pointer = w.ws_row;
+    col = w.ws_col;
+
  	int flag = 0 , check = 0;
  	get_permissions(pointer , now_path[path_counter++]);
 
 
-	struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-
-    int rows , cols ;
-    rows = w.ws_row;
-    cols = w.ws_col;
 
  	while (1)
     	{
@@ -93,126 +100,202 @@ void display(int count_of_entries , struct information pointer[] )
 		  	    else if(c == '\n')
 		  	    	{
 		  	    		//if(pointer[arrow].permissions[0] == 'd')
-		  	    		//		{
-		  	    						char temp[40];
-		  	    					//	strcpy(temp , now_path[path_counter-]);
-			  	    				
-				  	    				getcwd(temp , sizeof(temp));
+		  	    			if(move_to_command == 0)	
+		  	    				{	
+		  	    					if((strcmp(pointer[arrow].name,"..")==0) && strcmp(now_path[path_counter-1],home)==0)
+		  	    						{
+		  	    							/*cout<<"MotherFuckers"<<endl;
+		  	    							count_of_entries = get_num_entries(now_path[path_counter-1]);
+			  	        					struct information ptr[count_of_entries];
+				  	    					arrow=0;
+											display_list( count_of_entries, ptr);*/
+										}
+									else
+										{
+											top_pointer = 0;
+			  	    						bottom_pointer = w.ws_row;
+			  	    						char temp[40];
+			  	    					//	strcpy(temp , now_path[path_counter-]);
+				  	    					getcwd(temp , sizeof(temp));
+				  	    					strcat(temp , "/") ;
+				  	    					strcat(temp , pointer[arrow].name);
+				  	    				
+				  	    				int i = 0;
+				  	    				//while( i < max_counter )
+				  	    					if( strcmp(temp ,now_path[path_counter])== 0)
+				  	    					//{
+				  	    						check = 1;
+				  	    						//break; 
+				  	    					//}
+				  	    				if(check != 1)
+				  	    				{
+
+				  	    					max_counter = path_counter +1;
+	//			  	    					path_counter = path_counter - 1;
+				  	    					getcwd(now_path[path_counter] , sizeof(now_path[path_counter]));
+				  	    					strcat(now_path[path_counter] , "/") ;
+				  	    					strcat(now_path[path_counter] , pointer[arrow].name);
+				  	    				}	
+				  	    				
+				  	    				//}
+			  	    				 	//printf("\033[2J");
+										//printf("\033[H");
+										count_of_entries = get_num_entries(now_path[path_counter]);
 			  	    					
-			  	    					strcat(temp , "/") ;
-			  	    					
-			  	    					strcat(temp , pointer[arrow].name);
-			  	    				
-			  	    				int i = 0;
-			  	    				//while( i < max_counter )
-			  	    					if( strcmp(temp ,now_path[path_counter-1])== 0)
-			  	    					//{
-			  	    						check = 1;
-			  	    						//break; 
-			  	    					//}
-			  	    				if(check != 1)
-			  	    				{
-
-			  	    					max_counter = path_counter +1;
-//			  	    					path_counter = path_counter - 1;
-			  	    					getcwd(now_path[path_counter] , sizeof(now_path[path_counter]));
-			  	    					strcat(now_path[path_counter] , "/") ;
-			  	    					strcat(now_path[path_counter] , pointer[arrow].name);
-			  	    				}	
-			  	    				else 
-			  	    					{
-
-			  	    						path_counter = path_counter-1;
-		  	    						}
-		  	    					
-
-
-			  	    				//}
-		  	    				 	//printf("\033[2J");
-									//printf("\033[H");
-									
-									
-									count_of_entries = get_num_entries(now_path[path_counter]);
-		  	    					
-		  	    					struct information ptr[count_of_entries];
-		  	    					arrow=0;
-									
-									display( count_of_entries, ptr);
-						
+			  	    					struct information ptr[count_of_entries];
+			  	    					arrow=0;
+										
+										display( count_of_entries, ptr);
+										}
+								}
 						}
 
 						else if(c == 127)
 								{
-									if(path_counter >1 )
-									{	
-		  	    					getcwd(now_path[path_counter] , sizeof(now_path[path_counter]));
-		  	    					strcat(now_path[path_counter] , "/") ;
-		  	    					strcat(now_path[path_counter] , "..");
-									chdir(now_path[path_counter]);
-		  	    					
-		  	    					count_of_entries = get_num_entries(now_path[path_counter]);//p);//now_path);
-		  	    					
-		  	    					struct information ptr[count_of_entries];
-									arrow = 0;
-									
-									display( count_of_entries , ptr);//p);//now_path);
-									}
+
+									if(move_to_command == 0)
+										{
+											if(path_counter >1 )
+												{	
+					  	    					getcwd(now_path[path_counter] , sizeof(now_path[path_counter]));
+					  	    					strcat(now_path[path_counter] , "/") ;
+					  	    					strcat(now_path[path_counter] , "..");
+												chdir(now_path[path_counter]);
+					  	    					
+					  	    					count_of_entries = get_num_entries(now_path[path_counter]);//p);//now_path);
+					  	    					
+					  	    					struct information ptr[count_of_entries];
+												arrow = 0;
+												
+												display( count_of_entries , ptr);//p);//now_path);
+												}
+										}
 								}
 
 		  	    else if(c=='H'||c=='h')
 		  	    				{
-		  	    					strcpy(now_path[path_counter],home);
-									count_of_entries = get_num_entries(now_path[path_counter]);
-		  	    					arrow = 0;
-		  	    					struct information ptr[count_of_entries];
-									display( count_of_entries , ptr );
-		  	    				}
+		  	    				  	if(move_to_command == 0)
+			  	    					{
+			  	    						top_pointer = 0;
+				  	    					bottom_pointer = w.ws_row;			
+				  	    					strcpy(now_path[path_counter],home);
+											count_of_entries = get_num_entries(now_path[path_counter]);
+				  	    					arrow = 0;
+				  	    					struct information ptr[count_of_entries];
+											display( count_of_entries , ptr );
+										}
+								}
 
 		  	    else if(c == 'D') // left
 		  	    			{
-
-		  	    				if( path_counter >1)
-		  	    				{
-		  	    					flag = 1; 
-		  	    					path_counter -= 2;
-		  	    					chdir(now_path[path_counter]);
-		  	    					count_of_entries = get_num_entries (now_path[path_counter ]);
-		  	    					arrow = 0;
-		  	    					struct information ptr[count_of_entries];
-		  	    				
-		  	    					display(count_of_entries , ptr );
-		  	    				}
-		  	    				
+		  	    				if(move_to_command == 0)
+			  	    				{
+			  	    					if( path_counter >1)
+				  	    				{
+				  	    					top_pointer = 0;
+				  	    					bottom_pointer = w.ws_row;			
+				  	    					flag = 1; 
+				  	    					path_counter -= 2;
+				  	    					chdir(now_path[path_counter]);
+				  	    					count_of_entries = get_num_entries (now_path[path_counter ]);
+				  	    					arrow = 0;
+				  	    					struct information ptr[count_of_entries];
+				  	    				
+				  	    					display(count_of_entries , ptr );
+				  	    				}
+				  	    			}
 		  	    			}
+
 		  	    else if(c== 'C') //right 
 		  	    			{
-		  	    				if(path_counter < max_counter )
-		  	    				{
-//		  	    				path_counter += 1;
-		  	    				if(path_counter )
-		  	    				count_of_entries = get_num_entries (now_path[path_counter]);
-		  	    				arrow = 0;
-		  	    				struct information ptr[count_of_entries];
-
-		  	    				display(count_of_entries , ptr );
-		  	    				}
-		  	    			}
+		  	    				if(move_to_command == 0)
+			  	    				{if(path_counter < max_counter )
+				  	    				{
+				  	    					top_pointer = 0;
+				  	    					bottom_pointer = w.ws_row;			
+				  	    					
+		//		  	    				path_counter += 1;
+				  	    				if(path_counter )
+				  	    				count_of_entries = get_num_entries (now_path[path_counter]);
+				  	    				arrow = 0;
+				  	    				struct information ptr[count_of_entries];
+	
+				  	    				display(count_of_entries , ptr );
+			  	    					}
+			  	    				}
+							}
 
 
 			    else if(c== 'A' && arrow>0)  
 			  		{
+			  			if(move_to_command == 0)
+				  			{
+					  			printf("\033[1A"); // for up arrow key
+					  				arrow--;
+					  			if(count_of_entries >= 0 && arrow < top_pointer && top_pointer > 0)
+					  			{
+					  				top_pointer--;
+					  				bottom_pointer--;
+					  				overflow_display(count_of_entries , pointer);
+					  				printf("\033[H");
+				  				}
+				  			}
+					}
 
-			  			printf("\033[1A"); // for up arrow key
-			  			arrow--;
-
-			  		} 
-		  	    else if(c== 'B' && arrow < count_of_entries-1)  
+		  	    else if(c== 'B' && arrow < count_of_entries-1 && arrow < bottom_pointer - 1 && move_to_command==0 )  
 		  	  		{
 		  	  			printf("\033[1B"); // for down arrow key
 		  	  			arrow++;
-		  	  		} 
-		}
+			  			if(count_of_entries > bottom_pointer-1 && arrow == bottom_pointer-1 && arrow < count_of_entries)
+			  			{
+/*			  				count_of_entries = get_num_entries (now_path[path_counter]);
+		  	    				arrow = 0;
+		  	    				struct information ptr[count_of_entries];
+*/							top_pointer++;
+			  				bottom_pointer++;
+			  				overflow_display(count_of_entries , pointer);
+			  				printf("\033[A");
+			  				printf("\033[%dD",68);
+//			  				display(count_of_entries , pointer );
+			  			}
+			  		}
+			  	else if(c == ':')
+			  	{
+			  		move_to_command = 1;
+			  		display_list(count_of_entries , pointer);
+	  		     	tcsetattr(0, TCSANOW, &oterm);
+				    printf("\033[%dB", bottom_pointer );
+			      
+			        cin>>command;
+			      
+			        cout<<command;
+			      
+			        cout<<" here";
+			      	cout<<" "<<count_of_entries;
+					    
+			        function_to_store_in_termios_getchar();
+			        char c ;
+			        c = getchar();
+			        char d = getchar();
+					 if(d == '\033')
+				  	{
+				  		move_to_command = 0;
+			  			//count_of_entries = get_num_entries (now_path[path_counter]);
+  	    				arrow = 0;
+  	    				printf("\033[2J");
+				  		printf("\033[H");
+				  		struct information ptr[count_of_entries];
+						display_list(count_of_entries , pointer);
+				  	}
+				  	else
+				  	{
+				  		tcsetattr(0, TCSANOW, &oterm);
+				    }
 
+			  	}
+			  	//
+		}
+	
 	printf("\033[2J");
 	printf("\033[H");
 

@@ -31,3 +31,7 @@ void get_permissions( struct information pointer[] , char *  );
 //void display(int , struct information ptr[] , char *);
 
 int get_num_entries( char *  );
+
+void display_list(int count_items , struct information[]  );
+
+void overflow_display(int count_items , struct  information ptr[] );
