@@ -104,11 +104,11 @@ void display(int count_of_entries , struct information pointer[] )
 		  	    				{	
 		  	    					if((strcmp(pointer[arrow].name,"..")==0) && strcmp(now_path[path_counter-1],home)==0)
 		  	    						{
-		  	    							/*cout<<"MotherFuckers"<<endl;
-		  	    							count_of_entries = get_num_entries(now_path[path_counter-1]);
+		  	    							/*cout<<"MotherFuckers"<<endl;*/
+		  	    							count_of_entries = get_num_entries(home);
 			  	        					struct information ptr[count_of_entries];
 				  	    					arrow=0;
-											display_list( count_of_entries, ptr);*/
+											display_list( count_of_entries, ptr);
 										}
 									else
 										{
@@ -178,6 +178,8 @@ void display(int count_of_entries , struct information pointer[] )
 			  	    					{
 			  	    						top_pointer = 0;
 				  	    					bottom_pointer = w.ws_row;			
+				  	    					path_counter =0;
+				  	    					max_counter = path_counter+1;
 				  	    					strcpy(now_path[path_counter],home);
 											count_of_entries = get_num_entries(now_path[path_counter]);
 				  	    					arrow = 0;
@@ -276,6 +278,7 @@ void display(int count_of_entries , struct information pointer[] )
 			        function_to_store_in_termios_getchar();
 			        char c ;
 			        c = getchar();
+			        
 			        char d = getchar();
 					 if(d == '\033')
 				  	{

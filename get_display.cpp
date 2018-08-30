@@ -246,9 +246,10 @@ void display_list(int count_items , struct information store_info[])
 								printf("%c",store_info[i].last_modified[k]);
 									
 					
+
 							//Use dirent here because name is not present in stat_structure
 		//					if(strlen(store_info[i].name)<col-2)
-								printf(" %s\n",store_info[i].name);
+								cout<<setw(20)<<store_info[i].name<<endl;
 							/*else
 							{
 								for(int p = 0; p <= col-2 ; p++)
@@ -259,7 +260,7 @@ void display_list(int count_items , struct information store_info[])
 					}
 				
 					printf("\033[%dB", bottom_pointer );//- count_items);
-						cout <<"\033[1;31m STATUS BAR                                 PRESS : FOR COMMAND MODE\033[0m" ;//               : FOR NORMAL MODE "; 
+						cout <<setw(40)<<"\033[1;31m STATUS BAR                                 PRESS : FOR COMMAND MODE\033[0m" ;//               : FOR NORMAL MODE "; 
 				}	
 				else
 				{
@@ -333,14 +334,15 @@ void display_list(int count_items , struct information store_info[])
 									printf("%c",store_info[i].last_modified[i]);
 										
 						
+								cout<<" ";
 								//Use dirent here because name is not present in stat_structure
-								printf(" %s\n",store_info[i].name);
+								cout<<left<<setw(20)<<(" %s\n",store_info[i].name);
 
 						}
 						if(move_to_command==0 )
 							cout<<"\033[1;31m STATUS BAR                                 PRESS : FOR COMMAND MODE\033[0m";
 						else
-							cout<<"\033[1;31m Enter Any Command \033[0m"; 
+							cout<<setw(40)<<"\033[1;31m Enter Any Command \033[0m"; 
 				}
 		
 	}
