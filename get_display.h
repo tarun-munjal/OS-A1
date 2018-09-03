@@ -13,7 +13,6 @@
 
 struct information
 {
-
 char *name ;
 char permissions[11] ;
 char *last_modified ;

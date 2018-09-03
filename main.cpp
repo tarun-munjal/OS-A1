@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "get_display.h"
 #include "keystrokes.h"
+#include "command_mode.h"
 #include <cstring>
 #include <string.h>
 #include <stack>

@@ -27,6 +27,7 @@ extern int arrow;
 extern int col;
 extern int row;
 extern int move_to_command;
+extern char now_path[100][100];
 
 struct information * insert(struct information *node , struct information *head )
 {
@@ -61,8 +62,8 @@ int get_num_entries(char *now_path)//char* now_path)
 	
 	if(directory == NULL)
 	{
-		printf("Error : Unable to open directory");
-		exit(1);
+		printf("Error : Unable to open directory ");
+		return 0;
 	}	
 
 
@@ -121,11 +122,10 @@ void get_permissions( struct information store_info[] , char * now_path)//char *
 			}
 
 	directory = opendir(now_path);
-	
 	if(directory == NULL)
 	{
 		printf("Error : Unable to open directory Here.\n");
-		exit(1);
+		return ;
 	}	
  	
  	//stat structure to find all the file attributes from sys/stat
@@ -188,7 +188,7 @@ void get_permissions( struct information store_info[] , char * now_path)//char *
 						store_info[count_items].uname = uid->pw_name; 
 						store_info[count_items].gname = gid->gr_name;
 						store_info[count_items].last_modified = time ;
-
+						
 					count_items++;
 					}
 
@@ -198,22 +198,13 @@ void get_permissions( struct information store_info[] , char * now_path)//char *
 							printf("Unable to print ");
 						}
 				}
-
 						display_list( count_items, store_info );
 
 }
-			//	cout<<count_items;
-/*				cout<<store_info[0].name;
-				cout<<store_info[1].name;
-				cout<<store_info[2].name;
-				cout<<store_info[3].name;*/
 
-					//Displaying all the values
-				//cout<<bottom_pointer<<endl;
 
 void display_list(int count_items , struct information store_info[])
 {
-
 		if(move_to_command == 0)
 			{	
 				int i = top_pointer;
@@ -249,18 +240,22 @@ void display_list(int count_items , struct information store_info[])
 
 							//Use dirent here because name is not present in stat_structure
 		//					if(strlen(store_info[i].name)<col-2)
+							
+							cout<<" ";
+							int len = strlen(store_info[i].name);
+							if(len <=20)
 								cout<<setw(20)<<store_info[i].name<<endl;
-							/*else
-							{
-								for(int p = 0; p <= col-2 ; p++)
-								printf(" %c\n",store_info[i].name[p]);
-							//	printf("..");
-							}*/
+							else
+								{
+									for(int p = 0 ; p<19 ; p ++)
+									cout<<store_info[i].name[p];
+									cout<<".."<<endl;
+								}
 				
 					}
 				
 					printf("\033[%dB", bottom_pointer );//- count_items);
-						cout <<setw(40)<<"\033[1;31m STATUS BAR                                 PRESS : FOR COMMAND MODE\033[0m" ;//               : FOR NORMAL MODE "; 
+						cout <<setw(40)<<"\033[1;31mSTATUS BAR                                 PRESS : FOR COMMAND MODE\033[0m" ;//               : FOR NORMAL MODE "; 
 				}	
 				else
 				{
@@ -268,7 +263,6 @@ void display_list(int count_items , struct information store_info[])
 					printf("\033[%dB", bottom_pointer );//- count_items);
 					//to clear one line
 					printf("\033[2K");
-					cout<<"\033[1;31m Enter Any Command \033[0m"; 
 
 					//call a function for command mode 
 				}
@@ -306,43 +300,53 @@ void display_list(int count_items , struct information store_info[])
 	//						cout<<bottom_pointer<<endl;
 		//	printf("\33[%dD",col);
 				int i=top_pointer;
+
 				for(; i <count_items && i < bottom_pointer -1  ; i++)// && i < count_items)
 						{
 							for(int j=0 ; j<10 ; j++)
-										cout<<store_info[i].permissions[j];
-										
-								if(store_info[i].size>1024 && store_info[i].size<1048576 )
-										cout<<setw(6)<<store_info[i].size/1024<<"K";
-			
-								else if(store_info[i].size>1048576)
-										cout<<setw(6)<<store_info[i].size/1048576<<"M";
-			
-								else
-										cout<<" "<<setw(6)<<store_info[i].size;
-								
-						
-								//Printing UserName
-								cout<<setw(10)<<store_info[i].uname;
-								
-						
-								//Printing GroupName	
-								cout<<setw(10)<<store_info[i].gname<<" ";
-						
-						
-								//Last line of Char Time has \n so print like this and to avoid the long time 
-								for(int i=4;i<=15;i++)
-									printf("%c",store_info[i].last_modified[i]);
-										
-						
-								cout<<" ";
-								//Use dirent here because name is not present in stat_structure
-								cout<<left<<setw(20)<<(" %s\n",store_info[i].name);
+									//cout<<"he";
+									cout<<store_info[i].permissions[j];
+									
+							if(store_info[i].size>1024 && store_info[i].size<1048576 )
+									cout<<setw(6)<<store_info[i].size/1024<<"K";
+		
+							else if(store_info[i].size>1048576)
+									cout<<setw(6)<<store_info[i].size/1048576<<"M";
+		
+							else
+									cout<<" "<<setw(6)<<store_info[i].size;
+							
+					
+							//Printing UserName
+							cout<<setw(10)<<store_info[i].uname;
+							
+					
+							//Printing GroupName	
+							cout<<setw(10)<<store_info[i].gname<<" ";
+					
+					
+							//Last line of Char Time has \n so print like this and to avoid the long time 
+							for(int k=4 ; k<=15 ; k++)
+								printf("%c",store_info[i].last_modified[k]);
+									
+					
+
+							//Use dirent here because name is not present in stat_structure
+							cout<<" ";
+							int len = strlen(store_info[i].name);
+							if(len <=20)
+								cout<<setw(20)<<store_info[i].name<<endl;
+							else
+								{
+									for(int p = 0 ; p<18 ; p ++)
+									cout<<store_info[i].name[p];
+									cout<<".."<<endl;
+								}
 
 						}
 						if(move_to_command==0 )
-							cout<<"\033[1;31m STATUS BAR                                 PRESS : FOR COMMAND MODE\033[0m";
-						else
-							cout<<setw(40)<<"\033[1;31m Enter Any Command \033[0m"; 
+							cout<<"\033[1;31mSTATUS BAR                                 PRESS : FOR COMMAND MODE\033[0m";
+		
 				}
 		
 	}
