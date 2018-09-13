@@ -1,12 +1,12 @@
-This is a terminal based File Explorer programmed in C/C++ only. This is made without the use of any Shell Command's. "System" library function is also not used in prgramming of this terminal.
+This is a terminal based File Explorer programmed in C/C++ only. This is made without the use of any Shell Command's like 'ls , cp , mv'.Version of these commands are implemented seperately. "System()" library function is also not used in prgramming of this terminal.
 
 Various System libraries like ncurses , boost and many others are also not used.
 
-NOTE :  a.) You will can go back to normal mode from command mode by pressing ESC , Up , Down , Left , Right arrow keys 
+NOTE :  a.) You can go back to normal mode from command mode by pressing ESC , Up , Down , Left , Right arrow keys 
 	b.) Search results displayed cannot be navigated . 
-	c.) No relative paths will work. You will have to mention the absolute path 
+	c.) No relative paths will work. E.g. ~/ , ./ etc. You will have to mention the absolute path from where you open the 		application. 
 	d.) Don't forget to mention "/" before you enter a path 
-	e.) If you want to do work through commands in your home directory then just add "/" to the source/destination path where you want to work. 
+	e.) If you want to do work through commands in your home directory then just add "/" to the source/destination path where 	  you want to work. 
 
 This File Explorer is made using 2 modes. 
 1.Normal Mode : Where you can explore all the files , folders that are present in the system. 
